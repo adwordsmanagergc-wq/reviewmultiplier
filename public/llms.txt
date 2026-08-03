@@ -1,0 +1,61 @@
+# ReviewMultiplier
+
+> Build Your Customer Database & Get 5-Star Reviews
+
+ReviewMultiplier helps businesses boost their Google reviews through gamified customer engagement using QR codes and NFC tap cards.
+
+## What is ReviewMultiplier?
+
+ReviewMultiplier is a review generation and customer database building platform for hospitality businesses. Customers scan a QR code or tap an NFC card, play a fun game (spin wheel or dice roll), fill in their details to claim a prize, and leave a Google review. The business builds a customer database for marketing while naturally increasing their positive Google reviews.
+
+## Key Features
+
+- **Gamified Review Collection**: Spin wheel and dice roll games make leaving reviews fun for customers
+- **QR Code & NFC Tap Cards**: Stylish cards and stands for tables and counters
+- **Customer Database Building**: Collect customer names, emails, phone numbers, and locations
+- **Smart Routing (Optional)**: Route unhappy customers to feedback forms, happy customers to Google reviews
+- **Real-Time Stats Dashboard**: Track reviews, prizes claimed, and customer data
+- **Multi-Venue Management**: Manage multiple locations from one dashboard
+- **Prize Customisation**: Set your own prizes and their probability weights
+- **100% Google Compliant**: Follows all Google review guidelines
+
+## How It Works
+
+1. Customer scans QR code or taps NFC card at your venue
+2. They play a fun game (spin wheel or dice roll) to win a prize
+3. They fill in their details (name, email, phone) to claim the prize
+4. They're redirected to leave a Google review
+5. You build your customer database and watch your ratings climb
+
+## Pricing
+
+Regional pricing available:
+- UK: £75/month + £150 setup
+- USA: $99/month + $200 setup
+- Australia: $149/month + $300 setup
+- Europe: €89/month + €165 setup
+- UAE: AED 449/month + AED 750 setup
+- Indonesia: Rp 999,000/month + FREE setup
+- Philippines: ₱6,300/month
+
+All plans include QR stands and tap cards. 30% discount available with annual billing.
+
+## Available Pages
+
+- **Homepage** (`/`): Main product page with demo, pricing, and contact form
+- **Nico's Smokehouse** (`/nicossmokehouse`): BBQ restaurant client demo
+- **Nana Sans** (`/nanasans`): Indian restaurant client demo
+- **Red Ruby** (`/redruby`): Client demo page
+- **O Beach Ibiza** (`/obeachibiza`): Beach club client demo
+- **O Beach Ibiza Grand Opening** (`/obeachibiza1`): Special event page
+- **Finns Beach Party** (`/finnsbeachparty`): Beach party venue demo
+
+## Contact
+
+- Website: https://review-multiplier.com
+- Email: sales@metatap.io
+
+## Companies
+
+- Website & Marketing by Metatap Pty Ltd
+- Product by PT Mac Net Informasi (Indonesia)
