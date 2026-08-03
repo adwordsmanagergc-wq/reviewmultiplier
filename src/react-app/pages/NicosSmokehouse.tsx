@@ -6,7 +6,8 @@ import WordSearch from '@/react-app/components/WordSearch'
 
 const STORAGE_KEY = 'nicos_smokehouse_prize'
 
-// Prizes with weighted probabilities
+// Prizes with weighted probabilities. Segments with weight 0 are shown on the
+// wheel for visual appeal but can never be landed on.
 const PRIZES = [
   { label: 'Brownie', color: '#34A853', weight: 0 }, // Disabled
   { label: 'Free Drink', color: '#4285F4', weight: 0 }, // Disabled
@@ -16,20 +17,28 @@ const PRIZES = [
   { label: '20% Off', color: '#EA4335', weight: 0 }, // Disabled
 ]
 
-// Weighted random selection
+// Weighted random selection. Falls back to the first enabled prize.
 function selectWeightedPrize(): number {
   const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0)
+  if (totalWeight <= 0) return 0
   let random = Math.random() * totalWeight
-  
   for (let i = 0; i < PRIZES.length; i++) {
     random -= PRIZES[i].weight
     if (random <= 0) return i
   }
-  return 0 // Fallback to first prize
+  return PRIZES.findIndex((p) => p.weight > 0)
 }
 
 const REVIEW_URL = 'https://g.page/r/CYlBMYdGEjPpEBM/review'
+
+// Background image (hosted on the original CDN). A dark smokehouse-themed
+// gradient sits underneath so the page always looks intentional even if the
+// image fails to load.
 const BG_IMAGE = 'https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/WhatsApp-Image-2026-04-03-at-12.05.27.jpeg'
+const BG_FALLBACK =
+  'radial-gradient(circle at 50% 0%, #3a2416 0%, #241610 45%, #140b07 100%)'
+const NICO_IMAGE = 'https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/Screenshot-2026-04-03-at-12.22.01-pm.png'
+const HAMMER_IMAGE = 'https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/Screenshot-2026-04-03-at-12.22.12-pm.png'
 
 export default function NicosSmokehouse() {
   const [isSpinning, setIsSpinning] = useState(false)
@@ -43,7 +52,7 @@ export default function NicosSmokehouse() {
 
   const segmentAngle = 360 / PRIZES.length
 
-  // Check localStorage on mount for previous spin
+  // Restore a previous spin result (one spin per device).
   useEffect(() => {
     const savedPrize = localStorage.getItem(STORAGE_KEY)
     if (savedPrize) {
@@ -53,53 +62,49 @@ export default function NicosSmokehouse() {
         setWonPrizeIndex(prizeIndex)
         setWinner(PRIZES[prizeIndex].label)
         setIsCheekyMessage(true)
+        // Align the wheel so the previously-won segment sits under the pointer.
+        setRotation((360 - prizeIndex * segmentAngle - segmentAngle / 2 + 360) % 360)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const spin = () => {
     if (isSpinning) return
-    
-    // If already spun, show cheeky message with same prize
+
+    // Already spun on this device — show the same prize with a cheeky nudge.
     if (hasSpun && wonPrizeIndex !== null) {
       setIsCheekyMessage(true)
       setWinner(PRIZES[wonPrizeIndex].label)
       return
     }
-    
+
     setIsSpinning(true)
     setWinner(null)
     setIsCheekyMessage(false)
-    
-    const spins = 10 + Math.floor(Math.random() * 4)
-    
+
     const targetPrizeIndex = selectWeightedPrize()
-    
-    const targetAngle = 360 - (targetPrizeIndex * segmentAngle) - (segmentAngle / 2)
-    const normalizedTarget = ((targetAngle % 360) + 360) % 360
-    
-    const currentPosition = rotation % 360
-    let additionalRotation = normalizedTarget - currentPosition
-    if (additionalRotation < 0) additionalRotation += 360
-    
-    const newRotation = rotation + (spins * 360) + additionalRotation
-    
-    setRotation(newRotation)
-    
-    setTimeout(() => {
+
+    // Rotation that brings the CENTRE of the winning segment to the top pointer.
+    // Segment i centre sits at (i * segmentAngle + segmentAngle / 2) clockwise
+    // from the top, so we rotate by the complement, plus several full turns.
+    const fullSpins = 10 + Math.floor(Math.random() * 4)
+    const targetWithinTurn =
+      (360 - (targetPrizeIndex * segmentAngle + segmentAngle / 2)) % 360
+    const currentWithinTurn = ((rotation % 360) + 360) % 360
+    let delta = targetWithinTurn - currentWithinTurn
+    if (delta < 0) delta += 360
+
+    setRotation(rotation + fullSpins * 360 + delta)
+
+    window.setTimeout(() => {
       setIsSpinning(false)
       setWinner(PRIZES[targetPrizeIndex].label)
       setHasSpun(true)
       setWonPrizeIndex(targetPrizeIndex)
-      // Save to localStorage
       localStorage.setItem(STORAGE_KEY, targetPrizeIndex.toString())
     }, 6000)
   }
-
-
-
-  const NICO_IMAGE = 'https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/Screenshot-2026-04-03-at-12.22.01-pm.png'
-  const HAMMER_IMAGE = 'https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/Screenshot-2026-04-03-at-12.22.12-pm.png'
 
   const games = [
     { name: 'Word Search', component: <WordSearch />, mascot: NICO_IMAGE },
@@ -110,17 +115,18 @@ export default function NicosSmokehouse() {
   const prevGame = () => setCurrentGame((prev) => (prev - 1 + games.length) % games.length)
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col items-center justify-center p-4 relative"
       style={{
-        backgroundImage: `url(${BG_IMAGE})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundColor: '#140b07',
+        backgroundImage: `url(${BG_IMAGE}), ${BG_FALLBACK}`,
+        backgroundSize: 'cover, cover',
+        backgroundPosition: 'center, center',
       }}
     >
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/60" />
-      
+
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center max-w-md w-full">
         {/* Header */}
@@ -139,17 +145,19 @@ export default function NicosSmokehouse() {
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
             <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[24px] border-l-transparent border-r-transparent border-t-amber-500 drop-shadow-lg" />
           </div>
-          
+
           {/* Outer Ring */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-800 to-amber-950 shadow-2xl" />
-          
+
           {/* Wheel */}
-          <div 
-            className="absolute inset-3 rounded-full overflow-hidden transition-transform ease-out"
-            style={{ 
+          <div
+            className="absolute inset-3 rounded-full overflow-hidden"
+            style={{
               transform: `rotate(${rotation}deg)`,
-              transitionDuration: isSpinning ? '6s' : '0s',
-              transitionTimingFunction: 'cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+              transition: isSpinning
+                ? 'transform 6s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+                : 'none',
+              willChange: 'transform',
             }}
           >
             <svg viewBox="0 0 200 200" className="w-full h-full">
@@ -158,19 +166,19 @@ export default function NicosSmokehouse() {
                 const endAngle = startAngle + segmentAngle
                 const startRad = (startAngle * Math.PI) / 180
                 const endRad = (endAngle * Math.PI) / 180
-                
+
                 const x1 = 100 + 100 * Math.cos(startRad)
                 const y1 = 100 + 100 * Math.sin(startRad)
                 const x2 = 100 + 100 * Math.cos(endRad)
                 const y2 = 100 + 100 * Math.sin(endRad)
-                
+
                 const largeArc = segmentAngle > 180 ? 1 : 0
-                
+
                 const midAngle = startAngle + segmentAngle / 2
                 const midRad = (midAngle * Math.PI) / 180
                 const textX = 100 + 55 * Math.cos(midRad)
                 const textY = 100 + 55 * Math.sin(midRad)
-                
+
                 return (
                   <g key={index}>
                     <path
@@ -197,7 +205,7 @@ export default function NicosSmokehouse() {
               })}
             </svg>
           </div>
-          
+
           {/* Center Button */}
           <button
             onClick={spin}
@@ -307,9 +315,10 @@ export default function NicosSmokehouse() {
               </div>
 
               {/* Game Content */}
-              <div 
+              <div
                 className="relative flex items-center justify-center min-h-[350px] rounded-xl overflow-hidden"
                 style={{
+                  backgroundColor: '#f5f3ff',
                   backgroundImage: `url(${games[currentGame].mascot})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
