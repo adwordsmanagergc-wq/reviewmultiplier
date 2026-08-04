@@ -515,15 +515,9 @@ export default function Home() {
                               className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/90 text-gray-800 placeholder-gray-500 border-0 focus:ring-2 focus:ring-amber-400"
                               readOnly
                             />
-                            <input 
-                              type="email" 
-                              placeholder="Email" 
-                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/90 text-gray-800 placeholder-gray-500 border-0 focus:ring-2 focus:ring-amber-400"
-                              readOnly
-                            />
-                            <input 
-                              type="tel" 
-                              placeholder="Phone Number" 
+                            <input
+                              type="tel"
+                              placeholder="WhatsApp"
                               className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/90 text-gray-800 placeholder-gray-500 border-0 focus:ring-2 focus:ring-amber-400"
                               readOnly
                             />
