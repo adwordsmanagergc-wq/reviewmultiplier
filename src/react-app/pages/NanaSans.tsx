@@ -30,6 +30,13 @@ function selectWeightedPrize(): number {
 
 const REVIEW_URL = 'https://g.page/r/CVQE14ykHjexEBM/review'
 
+// Background image (hosted on the original CDN). A warm sepia gradient sits
+// underneath so the page always looks intentional even if the image fails to
+// load (the original Mocha CDN is being retired).
+const BG_IMAGE = 'https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/nanasansmum.png'
+const BG_FALLBACK =
+  'linear-gradient(135deg, #f5f5dc 0%, #e8dcc4 50%, #d4c4a8 100%)'
+
 export default function NanaSans() {
   const [isSpinning, setIsSpinning] = useState(false)
   const [rotation, setRotation] = useState(0)
@@ -52,8 +59,11 @@ export default function NanaSans() {
         setWonPrizeIndex(prizeIndex)
         setWinner(PRIZES[prizeIndex].label)
         setIsCheekyMessage(true)
+        // Align the wheel so the previously-won segment sits under the pointer.
+        setRotation((360 - prizeIndex * segmentAngle - segmentAngle / 2 + 360) % 360)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const spin = () => {
@@ -119,10 +129,11 @@ export default function NanaSans() {
     <div 
       className="min-h-screen flex flex-col items-center justify-center p-4 relative"
       style={{
-        backgroundImage: 'url("https://019d4ea7-203f-7f51-8c55-110f9f85cb54.mochausercontent.com/nanasansmum.png")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundColor: '#e8dcc4',
+        backgroundImage: `url("${BG_IMAGE}"), ${BG_FALLBACK}`,
+        backgroundSize: 'cover, cover',
+        backgroundPosition: 'center, center',
+        backgroundRepeat: 'no-repeat, no-repeat',
       }}
     >
       {/* Warm sepia overlay for readability */}
@@ -169,12 +180,14 @@ export default function NanaSans() {
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-700 to-red-800 shadow-2xl" />
           
           {/* Wheel */}
-          <div 
-            className="absolute inset-3 rounded-full overflow-hidden transition-transform ease-out"
-            style={{ 
+          <div
+            className="absolute inset-3 rounded-full overflow-hidden"
+            style={{
               transform: `rotate(${rotation}deg)`,
-              transitionDuration: isSpinning ? '6s' : '0s',
-              transitionTimingFunction: 'cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+              transition: isSpinning
+                ? 'transform 6s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+                : 'none',
+              willChange: 'transform',
             }}
           >
             <svg viewBox="0 0 200 200" className="w-full h-full">
