@@ -8,7 +8,7 @@ const STORAGE_KEY = 'nanasans_prize'
 
 // Prizes with weighted probabilities
 const PRIZES = [
-  { label: 'Free Samosa', color: '#34A853', weight: 24.375 },
+  { label: 'Free Samosa', color: '#34A853', weight: 0 }, // Display only — never wins
   { label: 'Free Drink', color: '#4285F4', weight: 24.375 },
   { label: '5% Off', color: '#00ACC1', weight: 24.375 },
   { label: '10% Off', color: '#FF6D01', weight: 24.375 },
