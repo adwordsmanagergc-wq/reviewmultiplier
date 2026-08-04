@@ -885,7 +885,7 @@ export default function Home() {
             ) : isUAE ? (
               <>
                 <div className="bg-gradient-to-r from-google-green/10 to-google-blue/10 border border-google-green/30 rounded-xl p-4 mb-4 max-w-md mx-auto">
-                  <p className="text-google-green font-bold text-lg mb-1">🎉 April Special — Setup Fee Waived!</p>
+                  <p className="text-google-green font-bold text-lg mb-1">🎉 This Months Special — Setup Fee Waived!</p>
                   <p className="text-gray-700 text-sm">✓ FREE Setup (Save AED 750)</p>
                   <p className="text-gray-700 text-sm">✓ 3 Months FREE Business Optimisation (Worth AED 3,500)</p>
                 </div>
@@ -917,7 +917,7 @@ export default function Home() {
             ) : (
               <>
                 <div className="bg-gradient-to-r from-google-green/10 to-google-blue/10 border border-google-green/30 rounded-xl p-4 mb-4 max-w-md mx-auto">
-                  <p className="text-google-green font-bold text-lg mb-1">🎉 April Special — Setup Fee Waived!</p>
+                  <p className="text-google-green font-bold text-lg mb-1">🎉 This Months Special — Setup Fee Waived!</p>
                   <p className="text-gray-700 text-sm">✓ FREE Setup (Save {pricing?.setupFeeValue})</p>
                   <p className="text-gray-700 text-sm">✓ 3 Months FREE Google Business {country === 'USA' ? 'Optimization' : 'Optimisation'} (Worth {pricing?.optimizationValue})</p>
                 </div>

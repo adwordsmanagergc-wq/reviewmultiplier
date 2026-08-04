@@ -44,7 +44,7 @@ Region: ${country} ${pricing?.flag}
 • Tap Cards: ${tapCards} × ${pricing?.tapCardPrice} each
 • Matte QR Displays (A5): ${qrDisplays} × ${pricing?.qrDisplayPrice} each
 
-🎁 *April Special Applied!*
+🎁 *This Months Special Applied!*
 ✅ Setup Fee WAIVED (Save ${pricing?.setupFeeValue})
 ✅ 3 Months FREE Google Business ${country === 'USA' ? 'Optimization' : 'Optimisation'} (Worth ${pricing?.optimizationValue})
 
@@ -75,7 +75,7 @@ Ready to get started!`
             <div className="flex items-center gap-3 mb-2">
               <Calendar className="w-8 h-8 flex-shrink-0" />
               <div>
-                <p className="font-bold text-lg">April Special!</p>
+                <p className="font-bold text-lg">This Months Special!</p>
                 <p className="text-sm text-white/90">Setup Fee Waived All Month</p>
               </div>
             </div>

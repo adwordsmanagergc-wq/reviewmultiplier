@@ -55,7 +55,7 @@ Email: ${formData.email}
 💰 *Total Due Today: ${formatPrice(totalPrice)}*
 (includes ${paymentPlan === 'yearly' ? '12 months' : 'first month'} subscription)
 
-🎁 *April Special Applied!*
+🎁 *This Months Special Applied!*
 ✅ Setup Fee WAIVED (Save AED 750)
 ✅ 3 Months FREE Business Optimisation (Worth AED 3,500)
 
@@ -85,7 +85,7 @@ Ready to get started!`
             <div className="flex items-center gap-3 mb-2">
               <Calendar className="w-8 h-8 flex-shrink-0" />
               <div>
-                <p className="font-bold text-lg">April Special!</p>
+                <p className="font-bold text-lg">This Months Special!</p>
                 <p className="text-sm text-white/90">Setup Fee Waived All Month</p>
               </div>
             </div>
