@@ -13,8 +13,8 @@ const PRIZES = [
   { label: 'Free Drink', color: '#4285F4', weight: 0 }, // Disabled
   { label: '5% Off', color: '#00ACC1', weight: 70 },
   { label: '10% Off', color: '#FF6D01', weight: 30 },
+  { label: 'Brownie', color: '#EA4335', weight: 0 }, // Disabled
   { label: '10% Off', color: '#A142F4', weight: 0 }, // Disabled
-  { label: 'Free Brownie', color: '#EA4335', weight: 0 }, // Disabled
 ]
 
 // Weighted random selection. Falls back to the first enabled prize.
