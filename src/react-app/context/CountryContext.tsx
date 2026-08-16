@@ -11,7 +11,6 @@ interface CountryPricing {
   setupFeeValue?: string
   optimizationValue?: string
   inclusions?: string
-  whatsappNumber: string
   tapCardPrice?: string
   qrDisplayPrice?: string
   yearlyPrice?: string
@@ -19,13 +18,13 @@ interface CountryPricing {
 }
 
 export const PRICING: Record<Country, CountryPricing> = {
-  UK: { price: '£75', currency: 'GBP', label: '£75 per month', flag: '🇬🇧', setupFee: '£150', setupFeeValue: '£150', optimizationValue: '£750', whatsappNumber: '61488898835', tapCardPrice: '£15', qrDisplayPrice: '£7.50', yearlyPrice: '£630', yearlySavings: '£270' },
-  USA: { price: '$99', currency: 'USD', label: '$99 per month', flag: '🇺🇸', setupFee: '$200', setupFeeValue: '$200', optimizationValue: '$850', whatsappNumber: '61488898835', tapCardPrice: '$25', qrDisplayPrice: '$10', yearlyPrice: '$832', yearlySavings: '$356' },
-  Australia: { price: '$149', currency: 'AUD', label: '$149 per month', flag: '🇦🇺', setupFee: '$300', setupFeeValue: '$300', optimizationValue: '$1,200', whatsappNumber: '61488898835', tapCardPrice: '$49', qrDisplayPrice: '$12', yearlyPrice: '$1,252', yearlySavings: '$536' },
-  Indonesia: { price: '1.5jt', currency: 'IDR', label: '1.5jt per month', flag: '🇮🇩', setupFee: '3jt', setupFeeValue: '3jt', optimizationValue: '15jt', whatsappNumber: '6281353698905', tapCardPrice: '200k', qrDisplayPrice: '99k', yearlyPrice: '12.6jt', yearlySavings: '5.4jt' },
-  Europe: { price: '€89', currency: 'EUR', label: '€89 per month', flag: '🇪🇺', setupFee: '€165', setupFeeValue: '€165', optimizationValue: '€850', whatsappNumber: '61488898835', tapCardPrice: '€19.90', qrDisplayPrice: '€9', yearlyPrice: '€748', yearlySavings: '€320' },
-  UAE: { price: 'AED 449', currency: 'AED', label: '449 Dirhams per month', flag: '🇦🇪', setupFee: 'AED 750', setupFeeValue: 'AED 750', optimizationValue: 'AED 3,500', whatsappNumber: '61488898835', tapCardPrice: 'AED 99', qrDisplayPrice: 'AED 35', yearlyPrice: 'AED 3,772', yearlySavings: 'AED 1,616' },
-  Philippines: { price: '₱6,300', currency: 'PHP', label: '₱6,300 per month', flag: '🇵🇭', setupFee: '₱12,000', setupFeeValue: '₱12,000', optimizationValue: '₱55,000', whatsappNumber: '639457157904', tapCardPrice: '₱1,200', qrDisplayPrice: '₱600', yearlyPrice: '₱52,920', yearlySavings: '₱22,680' },
+  UK: { price: '£75', currency: 'GBP', label: '£75 per month', flag: '🇬🇧', setupFee: '£150', setupFeeValue: '£150', optimizationValue: '£750', tapCardPrice: '£15', qrDisplayPrice: '£7.50', yearlyPrice: '£630', yearlySavings: '£270' },
+  USA: { price: '$99', currency: 'USD', label: '$99 per month', flag: '🇺🇸', setupFee: '$200', setupFeeValue: '$200', optimizationValue: '$850', tapCardPrice: '$25', qrDisplayPrice: '$10', yearlyPrice: '$832', yearlySavings: '$356' },
+  Australia: { price: '$149', currency: 'AUD', label: '$149 per month', flag: '🇦🇺', setupFee: '$300', setupFeeValue: '$300', optimizationValue: '$1,200', tapCardPrice: '$49', qrDisplayPrice: '$12', yearlyPrice: '$1,252', yearlySavings: '$536' },
+  Indonesia: { price: '1.5jt', currency: 'IDR', label: '1.5jt per month', flag: '🇮🇩', setupFee: '3jt', setupFeeValue: '3jt', optimizationValue: '15jt', tapCardPrice: '200k', qrDisplayPrice: '99k', yearlyPrice: '12.6jt', yearlySavings: '5.4jt' },
+  Europe: { price: '€89', currency: 'EUR', label: '€89 per month', flag: '🇪🇺', setupFee: '€165', setupFeeValue: '€165', optimizationValue: '€850', tapCardPrice: '€19.90', qrDisplayPrice: '€9', yearlyPrice: '€748', yearlySavings: '€320' },
+  UAE: { price: 'AED 449', currency: 'AED', label: '449 Dirhams per month', flag: '🇦🇪', setupFee: 'AED 750', setupFeeValue: 'AED 750', optimizationValue: 'AED 3,500', tapCardPrice: 'AED 99', qrDisplayPrice: 'AED 35', yearlyPrice: 'AED 3,772', yearlySavings: 'AED 1,616' },
+  Philippines: { price: '₱6,300', currency: 'PHP', label: '₱6,300 per month', flag: '🇵🇭', setupFee: '₱12,000', setupFeeValue: '₱12,000', optimizationValue: '₱55,000', tapCardPrice: '₱1,200', qrDisplayPrice: '₱600', yearlyPrice: '₱52,920', yearlySavings: '₱22,680' },
 }
 
 // Map country codes to our pricing regions

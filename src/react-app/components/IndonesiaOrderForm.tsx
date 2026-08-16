@@ -15,6 +15,8 @@ export default function IndonesiaOrderForm({ onClose }: IndonesiaOrderFormProps)
     tapCards: 2
   })
   const [paymentPlan, setPaymentPlan] = useState<'monthly' | 'yearly'>('monthly')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   const QR_DISPLAY_PRICE = 99000 // 99k
   const TAP_CARD_PRICE = 200000 // 200k
@@ -33,36 +35,64 @@ export default function IndonesiaOrderForm({ onClose }: IndonesiaOrderFormProps)
     return `${Math.round(price / 1000)}k`
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Build WhatsApp message
-    const subscriptionText = paymentPlan === 'yearly' 
+    setIsSubmitting(true)
+
+    const subscriptionText = paymentPlan === 'yearly'
       ? `12 Months Upfront: 12.6jt (Save 30% - 5.4jt!)`
       : `Monthly Subscription: 1.5jt/month`
-    
-    const message = `🎉 *NEW ORDER - ReviewMultiplier*
 
-📍 *Business Details*
+    const message = `NEW ORDER - ReviewMultiplier
+
 Business Name: ${formData.businessName}
 Contact Name: ${formData.name}
-WhatsApp: ${formData.whatsapp}
+Contact: ${formData.whatsapp}
 
-📦 *Order Details*
-• Matte QR Displays: ${formData.qrDisplays}x @ 99k = ${formatPrice(qrTotal)}
-• Tap Cards: ${formData.tapCards}x @ 200k = ${formatPrice(tapCardTotal)}
-• ${subscriptionText}
+Order Details:
+- Matte QR Displays: ${formData.qrDisplays}x @ 99k = ${formatPrice(qrTotal)}
+- Tap Cards: ${formData.tapCards}x @ 200k = ${formatPrice(tapCardTotal)}
+- ${subscriptionText}
 
-💰 *Total Due Today: ${formatPrice(totalPrice)}*
+Total Due Today: ${formatPrice(totalPrice)}
 (includes ${paymentPlan === 'yearly' ? '12 months' : 'first month'} subscription)
 
-✅ FREE Setup Fee Applied!`
+FREE Setup Fee Applied!`
 
-    // Encode message and open WhatsApp
-    const encodedMessage = encodeURIComponent(message)
-    const whatsappUrl = `https://wa.me/6281353698905?text=${encodedMessage}`
-    window.open(whatsappUrl, '_blank')
-    onClose()
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.whatsapp,
+          businessName: formData.businessName,
+          message,
+        }),
+      })
+      setSubmitted(true)
+    } catch (error) {
+      console.error('Error submitting order:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
+          <div className="w-16 h-16 bg-google-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Gift className="w-8 h-8 text-google-green" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Order Received!</h3>
+          <p className="text-gray-600 mb-6">Thanks — we've got your details and someone will be in touch shortly to get you set up.</p>
+          <Button onClick={onClose} className="w-full py-6 text-base bg-google-green hover:bg-green-600">
+            Close
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -279,11 +309,12 @@ WhatsApp: ${formData.whatsapp}
             </div>
           </div>
 
-          <Button 
+          <Button
             type="submit"
+            disabled={isSubmitting}
             className="w-full py-6 text-base bg-google-green hover:bg-green-600 shadow-soft-lg"
           >
-            Get Started via WhatsApp
+            {isSubmitting ? 'Sending...' : 'Complete Order'}
             <Send className="w-4 h-4 ml-2" />
           </Button>
         </form>

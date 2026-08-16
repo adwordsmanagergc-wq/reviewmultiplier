@@ -12,7 +12,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
  *
  * Configure email delivery by adding these Environment Variables in Vercel:
  *   RESEND_API_KEY     - your Resend API key
- *   CONTACT_TO_EMAIL   - where enquiries are sent (default: sales@metatap.io)
+ *   CONTACT_TO_EMAIL   - where enquiries are sent (required to send email)
  *   CONTACT_FROM_EMAIL - a verified Resend sender (default: onboarding@resend.dev)
  */
 
@@ -21,6 +21,7 @@ interface ContactPayload {
   email?: string;
   phone?: string;
   businessName?: string;
+  message?: string;
 }
 
 const escapeHtml = (value: string) =>
@@ -44,16 +45,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const email = (body.email || "").trim();
   const phone = (body.phone || "").trim();
   const businessName = (body.businessName || "").trim();
+  const message = (body.message || "").trim();
 
-  if (!name || !email) {
-    return res.status(400).json({ error: "Name and email are required" });
+  if (!name) {
+    return res.status(400).json({ error: "Name is required" });
   }
 
-  const toEmail = process.env.CONTACT_TO_EMAIL || "sales@metatap.io";
+  const toEmail = (process.env.CONTACT_TO_EMAIL || "").trim();
   const fromEmail = process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
   const resendApiKey = process.env.RESEND_API_KEY;
 
-  if (resendApiKey) {
+  if (resendApiKey && toEmail) {
     try {
       const html = `
         <div style="font-family: Arial, Helvetica, sans-serif; max-width: 600px;">
@@ -64,6 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             <tr><td style="padding:8px 0; font-weight:600;">Phone:</td><td>${escapeHtml(phone) || "Not provided"}</td></tr>
             <tr><td style="padding:8px 0; font-weight:600;">Business:</td><td>${escapeHtml(businessName) || "Not provided"}</td></tr>
           </table>
+          ${message ? `<pre style="white-space:pre-wrap; font-family:inherit; background:#f4f4f5; padding:12px; border-radius:8px; margin-top:12px;">${escapeHtml(message)}</pre>` : ""}
         </div>`;
 
       const resp = await fetch("https://api.resend.com/emails", {
@@ -75,10 +78,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         body: JSON.stringify({
           from: fromEmail,
           to: [toEmail],
-          reply_to: email,
+          ...(email ? { reply_to: email } : {}),
           subject: `New ReviewMultiplier Enquiry from ${businessName || name}`,
           html,
-          text: `New ReviewMultiplier Enquiry\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "Not provided"}\nBusiness: ${businessName || "Not provided"}`,
+          text: `New ReviewMultiplier Enquiry\n\nName: ${name}\nEmail: ${email || "Not provided"}\nPhone: ${phone || "Not provided"}\nBusiness: ${businessName || "Not provided"}${message ? `\n\n${message}` : ""}`,
         }),
       });
 

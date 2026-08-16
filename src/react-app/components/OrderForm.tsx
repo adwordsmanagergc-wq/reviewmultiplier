@@ -18,44 +18,72 @@ export default function OrderForm({ onClose }: OrderFormProps) {
   const [tapCards, setTapCards] = useState(2)
   const [qrDisplays, setQrDisplays] = useState(1)
   const [paymentPlan, setPaymentPlan] = useState<'monthly' | 'yearly'>('monthly')
-  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
   // Show shipping note for all countries except Indonesia and Australia
   const showShippingNote = country !== 'Indonesia' && country !== 'Australia'
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Build WhatsApp message
-    const subscriptionText = paymentPlan === 'yearly' 
+    setIsSubmitting(true)
+
+    const subscriptionText = paymentPlan === 'yearly'
       ? `12 Months Upfront: ${pricing?.yearlyPrice} (Save 30% - ${pricing?.yearlySavings}!)`
       : `Monthly Subscription: ${pricing?.label}`
-    
-    const message = `🎉 *NEW ORDER - ReviewMultiplier*
 
-📍 *Business Details*
+    const message = `NEW ORDER - ReviewMultiplier
+
 Business Name: ${formData.businessName}
 Contact Name: ${formData.name}
 Email: ${formData.email}
 Phone: ${formData.phone}
 Region: ${country} ${pricing?.flag}
 
-📦 *Package*
-• ${subscriptionText}
-• Tap Cards: ${tapCards} × ${pricing?.tapCardPrice} each
-• Matte QR Displays (A5): ${qrDisplays} × ${pricing?.qrDisplayPrice} each
+Package:
+- ${subscriptionText}
+- Tap Cards: ${tapCards} x ${pricing?.tapCardPrice} each
+- Matte QR Displays (A5): ${qrDisplays} x ${pricing?.qrDisplayPrice} each
 
-🎁 *This Months Special Applied!*
-✅ Setup Fee WAIVED (Save ${pricing?.setupFeeValue})
-✅ 3 Months FREE Google Business ${country === 'USA' ? 'Optimization' : 'Optimisation'} (Worth ${pricing?.optimizationValue})
+This Months Special Applied:
+- Setup Fee WAIVED (Save ${pricing?.setupFeeValue})
+- 3 Months FREE Google Business ${country === 'USA' ? 'Optimization' : 'Optimisation'} (Worth ${pricing?.optimizationValue})`
 
-Ready to get started!`
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          businessName: formData.businessName,
+          message,
+        }),
+      })
+      setSubmitted(true)
+    } catch (error) {
+      console.error('Error submitting order:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
-    // Encode message and open WhatsApp
-    const encodedMessage = encodeURIComponent(message)
-    const whatsappNumber = pricing?.whatsappNumber || '61488898835'
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`
-    window.open(whatsappUrl, '_blank')
-    onClose()
+  if (submitted) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
+          <div className="w-16 h-16 bg-google-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Gift className="w-8 h-8 text-google-green" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Order Received!</h3>
+          <p className="text-gray-600 mb-6">Thanks — we've got your details and someone will be in touch shortly to get you set up.</p>
+          <Button onClick={onClose} className="w-full py-6 text-base bg-google-green hover:bg-green-600">
+            Close
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -334,11 +362,12 @@ Ready to get started!`
             </div>
           </div>
 
-          <Button 
+          <Button
             type="submit"
+            disabled={isSubmitting}
             className="w-full py-6 text-base bg-google-green hover:bg-green-600 shadow-soft-lg"
           >
-            Get Started via WhatsApp
+            {isSubmitting ? 'Sending...' : 'Complete Order'}
             <Send className="w-4 h-4 ml-2" />
           </Button>
         </form>

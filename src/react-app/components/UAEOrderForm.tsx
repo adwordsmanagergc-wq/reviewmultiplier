@@ -16,6 +16,8 @@ export default function UAEOrderForm({ onClose }: UAEOrderFormProps) {
     tapCards: 2
   })
   const [paymentPlan, setPaymentPlan] = useState<'monthly' | 'yearly'>('monthly')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   const QR_DISPLAY_PRICE = 35 // 35 AED
   const TAP_CARD_PRICE = 99 // 99 AED
@@ -31,41 +33,68 @@ export default function UAEOrderForm({ onClose }: UAEOrderFormProps) {
     return `AED ${price.toLocaleString()}`
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Build WhatsApp message
-    const subscriptionText = paymentPlan === 'yearly' 
+    setIsSubmitting(true)
+
+    const subscriptionText = paymentPlan === 'yearly'
       ? `12 Months Upfront: AED 3,772 (Save 30% - AED 1,616!)`
       : `Monthly Subscription: AED 449/month`
-    
-    const message = `🎉 *NEW ORDER - ReviewMultiplier UAE*
 
-📍 *Business Details*
+    const message = `NEW ORDER - ReviewMultiplier UAE
+
 Business Name: ${formData.businessName}
 Contact Name: ${formData.name}
 Phone: ${formData.phone}
 Email: ${formData.email}
 
-📦 *Order Details*
-• Matte Table QR Displays: ${formData.qrDisplays}x @ AED 35 = ${formatPrice(qrTotal)}
-• Tap Cards: ${formData.tapCards}x @ AED 99 = ${formatPrice(tapCardTotal)}
-• ${subscriptionText}
+Order Details:
+- Matte Table QR Displays: ${formData.qrDisplays}x @ AED 35 = ${formatPrice(qrTotal)}
+- Tap Cards: ${formData.tapCards}x @ AED 99 = ${formatPrice(tapCardTotal)}
+- ${subscriptionText}
 
-💰 *Total Due Today: ${formatPrice(totalPrice)}*
+Total Due Today: ${formatPrice(totalPrice)}
 (includes ${paymentPlan === 'yearly' ? '12 months' : 'first month'} subscription)
 
-🎁 *This Months Special Applied!*
-✅ Setup Fee WAIVED (Save AED 750)
-✅ 3 Months FREE Business Optimisation (Worth AED 3,500)
+This Months Special Applied:
+- Setup Fee WAIVED (Save AED 750)
+- 3 Months FREE Business Optimisation (Worth AED 3,500)`
 
-Ready to get started!`
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          businessName: formData.businessName,
+          message,
+        }),
+      })
+      setSubmitted(true)
+    } catch (error) {
+      console.error('Error submitting order:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
-    // Encode message and open WhatsApp
-    const encodedMessage = encodeURIComponent(message)
-    const whatsappUrl = `https://wa.me/61488898835?text=${encodedMessage}`
-    window.open(whatsappUrl, '_blank')
-    onClose()
+  if (submitted) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
+          <div className="w-16 h-16 bg-google-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Gift className="w-8 h-8 text-google-green" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Order Received!</h3>
+          <p className="text-gray-600 mb-6">Thanks — we've got your details and someone will be in touch shortly to get you set up.</p>
+          <Button onClick={onClose} className="w-full py-6 text-base bg-google-green hover:bg-green-600">
+            Close
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -311,9 +340,10 @@ Ready to get started!`
 
           <Button 
             type="submit"
+            disabled={isSubmitting}
             className="w-full py-6 text-base bg-google-green hover:bg-green-600 shadow-soft-lg"
           >
-            Get Started via WhatsApp
+            {isSubmitting ? 'Sending...' : 'Complete Order'}
             <Send className="w-4 h-4 ml-2" />
           </Button>
         </form>

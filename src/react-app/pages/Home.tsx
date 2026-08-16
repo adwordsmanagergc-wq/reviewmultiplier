@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { Star, Check, Zap, TrendingUp, Shield, MessageSquare, ChevronRight, Wifi, Reply, RefreshCw, Send, Phone, BarChart3, Building2, Landmark, Globe, ChevronDown } from 'lucide-react'
+import { Star, Check, Zap, TrendingUp, Shield, MessageSquare, ChevronRight, Wifi, Reply, RefreshCw, Send, BarChart3, Building2, Landmark, Globe, ChevronDown } from 'lucide-react'
 import { Button } from '@/react-app/components/ui/button'
 import SpinWheel from '@/react-app/components/SpinWheel'
 import DiceGame from '@/react-app/components/DiceGame'
 
 import MathsQuiz from '@/react-app/components/MathsQuiz'
 import WordSearch from '@/react-app/components/WordSearch'
-import WhatsAppFloat from '@/react-app/components/WhatsAppFloat'
 import IndonesiaOrderForm from '@/react-app/components/IndonesiaOrderForm'
 import UAEOrderForm from '@/react-app/components/UAEOrderForm'
 import PhilippinesOrderForm from '@/react-app/components/PhilippinesOrderForm'
@@ -982,16 +981,7 @@ export default function Home() {
                 Get In Touch
               </h2>
               <p className="text-gray-600">
-                Fill out the form below and someone will contact you shortly, or{' '}
-                <a 
-                  href={isIndonesia ? "https://wa.me/6281353698905" : isPhilippines ? "https://wa.me/639457157904" : "https://wa.me/61488898835"} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-google-green font-semibold hover:underline inline-flex items-center gap-1"
-                >
-                  chat live via WhatsApp
-                  <Phone className="w-4 h-4" />
-                </a>
+                Fill out the form below and someone will contact you shortly.
               </p>
             </div>
             
@@ -1068,30 +1058,13 @@ export default function Home() {
               <a href="#" className="hover:text-gray-700 transition-colors">Contact</a>
             </div>
           </div>
-          <div className="border-t border-gray-100 pt-4 flex flex-col md:flex-row items-center justify-center gap-4 text-xs text-gray-400">
-            <span>
-              Website & Marketing by{' '}
-              <a 
-                href="https://wa.me/61488898835" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-google-green transition-colors"
-              >
-                Metatap Pty Ltd
-              </a>
-            </span>
-            {isIndonesia && (
-              <>
-                <span className="hidden md:inline">•</span>
-                <span>Product by PT Mac Net Informasi (Indonesia)</span>
-              </>
-            )}
-          </div>
+          {isIndonesia && (
+            <div className="border-t border-gray-100 pt-4 flex items-center justify-center text-xs text-gray-400">
+              <span>Product by PT Mac Net Informasi (Indonesia)</span>
+            </div>
+          )}
         </div>
       </footer>
-
-      {/* Floating WhatsApp Button */}
-      <WhatsAppFloat />
 
       {/* Indonesia Order Form Modal */}
       {showIndonesiaForm && (
